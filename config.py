@@ -1,0 +1,2 @@
+FONT = 'Ubuntu'
+GEOMETRYWINDOW = '1910x1053'
