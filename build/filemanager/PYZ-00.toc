@@ -15,6 +15,7 @@
   ('bisect', '/usr/lib/python3.13/bisect.py', 'PYMODULE'),
   ('bz2', '/usr/lib/python3.13/bz2.py', 'PYMODULE'),
   ('calendar', '/usr/lib/python3.13/calendar.py', 'PYMODULE'),
+  ('config', '/home/mark/PycharmProjects/FREImanagr/config.py', 'PYMODULE'),
   ('contextlib', '/usr/lib/python3.13/contextlib.py', 'PYMODULE'),
   ('contextvars', '/usr/lib/python3.13/contextvars.py', 'PYMODULE'),
   ('copy', '/usr/lib/python3.13/copy.py', 'PYMODULE'),
