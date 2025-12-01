@@ -89,7 +89,6 @@ class FileManager():
             width_for_label = 0
             for i in self.maindir:
                 width_for_label += 1
-                print(width_for_label)
             self.scrollbar_for_label.pack(side='top',fill='x')
             self.canvas_for_label.config(height=45)
         self.label1.config(width=width_for_label)
@@ -202,7 +201,7 @@ class FileManager():
             main_label.destroy()
         #UNTAR----------------------------------------------------------------------------------------------------------
         def Untar(p):
-            command = f'tar xof "{p}" -C "{self.main}"'
+            command = f'tar xof "{p}" -C "{self.main}" &'
             os.system(command)
         #LABEL WITH PATH TO UNARCHIVE-----------------------------------------------------------------------------------
         main_label = tk.Label(self.neuframe,text=self.main,wraplength=380)
@@ -218,7 +217,7 @@ class FileManager():
         tar_btn.place(x=170,y=280)
         #FUNCTION FOR UNZIP---------------------------------------------------------------------------------------------
         def UnZip(p):
-            command = f'unzip -o "{p}" -d "{self.main}"'
+            command = f'unzip -o "{p}" -d "{self.main}" &'
             os.system(command)
         #BUTTON FOR UNZIP-----------------------------------------------------------------------------------------------
         zip_btn = tk.Button(self.neuframe,text='Zip',command=lambda p=p:(UnZip(p),self.clear_neuframe(),self.update_dir()))
@@ -250,7 +249,7 @@ class FileManager():
             main_label.destroy()
         #FUNCTION FOR RELOCATE------------------------------------------------------------------------------------------
         def Relocate(p):
-            command = f'mv "{p}" {self.main}'
+            command = f'mv "{p}" {self.main} &'
             os.system(command)
             self.update_dir()
         #LABEL WITH RELOCATE PATH---------------------------------------------------------------------------------------
@@ -271,7 +270,7 @@ class FileManager():
         maindir_label = tk.Label(self.neuframe,text=p,borderwidth=2,relief='solid')
         maindir_label.place(x=0,y=0)
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
-        command_to_delete = f'rm -r {p}'
+        command_to_delete = f'rm -r {p} &'
         delete_button = tk.Button(self.neuframe,text='Delete',command=lambda :(os.system(command_to_delete),self.Go_Up(), self.update_dir(),self.clear_neuframe()))
         delete_button.place(x=0,y=90)
         #BUTTON FOR RENAME MAIN DIR-------------------------------------------------------------------------------------
@@ -295,7 +294,7 @@ class FileManager():
         #FUNCTION FOR ACCEPT CREATE DIR---------------------------------------------------------------------------------
         def clame_name_dir():
             name = name_entr.get()
-            command = f'mkdir {name}'
+            command = f'mkdir "{name}"'
             os.system(command)
 
             self.clear_neuframe()
@@ -317,7 +316,7 @@ class FileManager():
                 copy_name = Path_dir[0] + '/' + name_copy.get()
             if os.path.isfile(p):
                 copy_name = name_copy.get()
-            command = f'cp -r "{p}" "{copy_name}" '
+            command = f'cp -r "{p}" "{copy_name}" & '
             os.system(command)
             #AFTER COPY MOVE--------------------------------------------------------------------------------------------
             if os.path.isdir(p):
@@ -368,7 +367,7 @@ class FileManager():
         #OPEN FILE------------------------------------------------------------------------------------------------------
         def Open(pathapp):
             self.app = app_entry.get()
-            command = f'{self.app} "{pathapp}"'
+            command = f'{self.app} "{pathapp}" &'
             os.system(command)
         #BUTTON FOR OPEN FILE-------------------------------------------------------------------------------------------
         open_btn = tk.Button(self.neuframe,text='Open',command=lambda pathapp=pathapp:(Open(pathapp),self.clear_neuframe()))
