@@ -275,7 +275,10 @@ class FileManager():
         def Relocate(p):
             command = f'mv "{p}" {self.main} &'
             os.system(command)
-            self.update_dir()
+            if os.path.isdir(p):
+                self.Go_Up()
+            else:
+                self.update_dir()
         #LABEL WITH RELOCATE PATH---------------------------------------------------------------------------------------
         main_label = tk.Label(self.neuframe,text=self.main,font=FONT,wraplength=380)
         main_label.place(y=y_for_main_label)
