@@ -71,7 +71,7 @@ class FileManager():
 
         self.update_dir()
     #MAINDIR LABEL WITH SCROLLBAR---------------------------------------------------------------------------------------
-    def maindir_label(self):
+    def create_main_label (self):
         text_for_label = tk.Text(self.neuframe,width=45,height=2,background='grey',borderwidth=3,relief='ridge')
         text_for_label.place(x=2)
         text_for_label.tag_add('LBL','1.0')
@@ -85,7 +85,8 @@ class FileManager():
 
         if len(self.maindir) >= 30:
             scrollbar_for_label.place(y=40,width=380)
-    def doplabel(self,p):
+    #DOPLABEL WITH SCROLLBAR--------------------------------------------------------------------------------------------
+    def create_dop_label(self, p):
         if os.path.isdir(p):
             y_pos = 350
             y_pos_for_scrlb = 383
@@ -121,7 +122,7 @@ class FileManager():
         self.canvas_for_label.xview_moveto(0.0)
         #SCROOLBAR FOR LABEL--------------------------------------------------------------------------------------------
         width_for_label = 146 #width for label
-        self.maindir_label()
+        self.create_main_label()
         if len(self.maindir) >= 130:
             width_for_label = 0
             for i in self.maindir:
@@ -185,7 +186,7 @@ class FileManager():
     #CHANGE MOVE FOR FILES----------------------------------------------------------------------------------------------
     def change_move(self,p):
         #MAINP_LABEL----------------------------------------------------------------------------------------------------
-        self.maindir_label()
+        self.create_main_label()
         #BUTTON FOR DIRS MOVES------------------------------------------------------------------------------------------
         work_with_dir = tk.Button(self.neuframe, text='DirMoves',font=FONT,command=lambda p=self.maindir:(self.clear_neuframe(),self.change_moves_for_dir(p)))
         work_with_dir.place(x=0,y=55)
@@ -218,7 +219,10 @@ class FileManager():
         for i in all:
             full_path = os.path.join(self.main,i)
             if os.path.isdir(full_path):
-                list_for_relocate.append(i)
+                if self.maindir == full_path:
+                    pass
+                else:
+                    list_for_relocate.append(i)
             else:
                 pass
 
@@ -229,18 +233,18 @@ class FileManager():
         def Change_local_path(path_var):
             pv = path_var.get()
             self.main = os.path.join(self.main,pv)
-            self.doplabel(p=p)
+            self.create_dop_label(p=p)
         #FUNCTION FOR DOWN_CHANGE UNARCH PATH---------------------------------------------------------------------------
         def Change_local_path_down(path_var):
             down_dir = os.path.split(self.main)
             self.main = down_dir[0]
-            self.doplabel(p=p)
+            self.create_dop_label(p=p)
         #UNTAR----------------------------------------------------------------------------------------------------------
         def Untar(p):
             command = f'tar xof "{p}" -C "{self.main}" &'
             os.system(command)
         #LABEL WITH PATH TO UNARCHIVE-----------------------------------------------------------------------------------
-        self.doplabel(p=p)
+        self.create_dop_label(p=p)
         #BUTTON FOR UP-CHANGE UNARCHIVE PATH----------------------------------------------------------------------------
         up_btn = tk.Button(self.neuframe,text='Up',font=FONT,command=lambda p=p:(Change_local_path(path_var),self.UnArch(p)))
         up_btn.place(x=170,y=308)
@@ -275,7 +279,7 @@ class FileManager():
         for i in all:
             full_path = os.path.join(self.main,i)
             if os.path.isdir(full_path):
-                if os.path.isdir(full_path) == self.main:
+                if self.maindir == full_path:
                     pass
                 else:
                     list_for_relocate.append(i)
@@ -289,12 +293,12 @@ class FileManager():
         def Change_local_path(path_var):
             pv = path_var.get()
             self.main = os.path.join(self.main,pv)
-            self.doplabel(p=p)
+            self.create_dop_label(p=p)
         #FUNCTION FOR DOWN-CHANGE RELOCATE PATH-------------------------------------------------------------------------
         def Change_local_path_down(path_var):
             down_dir = os.path.split(self.main)
             self.main = down_dir[0]
-            self.doplabel(p=p)
+            self.create_dop_label(p=p)
         #FUNCTION FOR RELOCATE------------------------------------------------------------------------------------------
         def Relocate(p):
             command = f'mv "{p}" {self.main} &'
@@ -304,7 +308,7 @@ class FileManager():
             else:
                 self.update_dir()
         #LABEL WITH RELOCATE PATH---------------------------------------------------------------------------------------
-        self.doplabel(p=p)
+        self.create_dop_label(p=p)
         #BUTTON FOR UP-CHANGE RELOCATE PATH-----------------------------------------------------------------------------
         up_btn = tk.Button(self.neuframe,text='Up',font=FONT,command=lambda p=p:(Change_local_path(path_var),self.change_path_to_relocate(p)))
         up_btn.place(x=170,y=y_for_buttons)
@@ -317,7 +321,7 @@ class FileManager():
     #CHANGE MOVES FOR DIRS----------------------------------------------------------------------------------------------
     def change_moves_for_dir(self,p):
         #LABEL FOR PATH MAIN DIR----------------------------------------------------------------------------------------
-        self.maindir_label()
+        self.create_main_label()
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
         command_to_delete = f'rm -r {p} &'
         delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
