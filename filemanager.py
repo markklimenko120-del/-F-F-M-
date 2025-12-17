@@ -2,9 +2,12 @@
 import tkinter as tk
 import time
 from os import rename
+from queue import ShutDown
 from tkinter import ttk, StringVar, Scrollbar
 import os
 import filetype
+from PyInstaller.building.utils import format_binaries_and_datas
+
 from config import *
 
 
@@ -70,6 +73,8 @@ class FileManager():
         self.me.place(y=70)
 
         self.update_dir()
+
+        app = self.Window_of_Sudo(self.root,None)
     #MAINDIR LABEL WITH SCROLLBAR---------------------------------------------------------------------------------------
     def create_main_label (self):
         text_for_label = tk.Text(self.neuframe,width=45,height=2,background='grey',borderwidth=3,relief='ridge')
@@ -439,6 +444,40 @@ class FileManager():
             self.update_dir()
         except PermissionError:
             pass
+
+    class Window_of_Sudo():
+        def __init__(self,root,command):
+            self.root = root
+            self.command = command
+            self.createWindow()
+            self.createOpenLabel()
+            self.createOKButton()
+            self.createBackButton()
+            self.createEntry()
+
+        def createWindow(self):
+            self.SudoWindow = tk.Toplevel(self.root)
+            self.SudoWindow.geometry('500x150')
+            self.SudoWindow.title('Input Sudo')
+
+        def createOpenLabel(self):
+            self.OpenLabel = tk.Label(self.SudoWindow,text='Enter Root Password', font=(FONT,16))
+            self.OpenLabel.pack(anchor='center')
+
+        def createOKButton(self):
+            self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12))
+            self.OKButton.place(x=320,y=80)
+
+        def createBackButton(self):
+            self.BackButton = tk.Button(self.SudoWindow,text='Back',font=(FONT,12))
+            self.BackButton.place(x=120,y=80)
+
+        def createEntry(self):
+            self.Entry = tk.Entry(self.SudoWindow,width=50)
+            self.Entry.pack(anchor='center')
+
+
+
 
 
 #START -F-F-M-
