@@ -17,6 +17,7 @@ class FileManager():
     #CONSTRUCTOR--------------------------------------------------------------------------------------------------------
     def __init__(self,root):
         self.main = '' #Pwd for relocate func
+        self.sudo = False
         self.maindir = os.getcwd() #Main path to file/dir
         self.y_pos = 0 #y file position
         self.all = os.listdir(path='.') #List all files and dir in main dir
@@ -305,7 +306,8 @@ class FileManager():
             self.create_dop_label(p=p)
         #FUNCTION FOR RELOCATE------------------------------------------------------------------------------------------
         def Relocate(p):
-            command = f'mv "{p}" {self.main} &'
+            command = f'mv "{p}" {self.main}&'
+            self.check_rights(p=p)
             os.system(command)
             if os.path.isdir(p):
                 self.Go_Up()
@@ -443,6 +445,19 @@ class FileManager():
             self.update_dir()
         except PermissionError:
             pass
+
+    def check_rights(self,p):
+        command = f'ls -l {p} > /home/mark/PycharmProjects/FREImanagr/rights_p'
+        os.system(command)
+        rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
+        for line in rights:
+            l = line
+        r = 'root root'
+        if r in l:
+            self.sudo = True
+        rights.close()
+
+
 
     class Window_of_Sudo():
         def __init__(self,root,command):
