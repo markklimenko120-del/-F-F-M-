@@ -17,7 +17,6 @@ class FileManager():
     #CONSTRUCTOR--------------------------------------------------------------------------------------------------------
     def __init__(self,root):
         self.main = '' #Pwd for relocate func
-        self.sudo = False
         self.maindir = os.getcwd() #Main path to file/dir
         self.y_pos = 0 #y file position
         self.all = os.listdir(path='.') #List all files and dir in main dir
@@ -74,7 +73,6 @@ class FileManager():
 
         self.update_dir()
 
-        app = self.Window_of_Sudo(self.root,None)
     #MAINDIR LABEL WITH SCROLLBAR---------------------------------------------------------------------------------------
     def create_main_label (self):
         text_for_label = tk.Text(self.neuframe,width=45,height=2,background='grey',borderwidth=3,relief='ridge')
@@ -199,7 +197,8 @@ class FileManager():
         open_button = tk.Button(self.neuframe,text='Open',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_move(p),self.open_file(p)))
         open_button.place(x=0,y=95)
         #BUTTON FOR DELETE FILE-----------------------------------------------------------------------------------------
-        command = f'rm -r "{p}" &'
+        command = f'rm -r "{p}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        self.check_rights(p=p)
         delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),os.system(command), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME FILE-----------------------------------------------------------------------------------------
@@ -246,7 +245,8 @@ class FileManager():
             self.create_dop_label(p=p)
         #UNTAR----------------------------------------------------------------------------------------------------------
         def Untar(p):
-            command = f'tar xof "{p}" -C "{self.main}" &'
+            command = f'tar xof "{p}" -C "{self.main}"2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(p=p)
             os.system(command)
         #LABEL WITH PATH TO UNARCHIVE-----------------------------------------------------------------------------------
         self.create_dop_label(p=p)
@@ -261,7 +261,8 @@ class FileManager():
         tar_btn.place(x=290,y=308)
         #FUNCTION FOR UNZIP---------------------------------------------------------------------------------------------
         def UnZip(p):
-            command = f'unzip -o "{p}" -d "{self.main}" &'
+            command = f'unzip -o "{p}" -d "{self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(p=p)
             os.system(command)
         #BUTTON FOR UNZIP-----------------------------------------------------------------------------------------------
         zip_btn = tk.Button(self.neuframe,text='Zip',font=FONT,command=lambda p=p:(UnZip(p),self.clear_neuframe(),self.update_dir()))
@@ -306,7 +307,7 @@ class FileManager():
             self.create_dop_label(p=p)
         #FUNCTION FOR RELOCATE------------------------------------------------------------------------------------------
         def Relocate(p):
-            command = f'mv "{p}" {self.main}&'
+            command = f'mv "{p}" {self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
             self.check_rights(p=p)
             os.system(command)
             if os.path.isdir(p):
@@ -329,7 +330,8 @@ class FileManager():
         #LABEL FOR PATH MAIN DIR----------------------------------------------------------------------------------------
         self.create_main_label()
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
-        command_to_delete = f'rm -r {p} &'
+        command_to_delete = f'rm -r {p} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        self.check_rights(p=p)
         delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME MAIN DIR-------------------------------------------------------------------------------------
@@ -355,7 +357,8 @@ class FileManager():
         #FUNCTION FOR ACCEPT CREATE DIR---------------------------------------------------------------------------------
         def clame_name_dir():
             name = name_entr.get()
-            command = f'mkdir "{name}"'
+            command = f'mkdir "{name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(None)
             os.system(command)
 
             self.clear_neuframe()
@@ -377,7 +380,8 @@ class FileManager():
                 copy_name = Path_dir[0] + '/' + name_copy.get()
             if os.path.isfile(p):
                 copy_name = name_copy.get()
-            command = f'cp -r "{p}" "{copy_name}" & '
+            command = f'cp -r "{p}" "{copy_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(p=p)
             os.system(command)
             #AFTER COPY MOVE--------------------------------------------------------------------------------------------
             if os.path.isdir(p):
@@ -401,6 +405,9 @@ class FileManager():
             else:
                 New_name = new_name.get()
             os.rename(p,New_name)
+            command = f'mv "{p}" "{New_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(p=p)
+            os.system(command)
 
             self.clear_neuframe()
             self.update_dir()
@@ -421,7 +428,8 @@ class FileManager():
         #OPEN FILE------------------------------------------------------------------------------------------------------
         def Open(pathapp):
             self.app = app_entry.get()
-            command = f'{self.app} "{pathapp}" &'
+            command = f'{self.app} "{pathapp}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(p=p)
             os.system(command)
         #BUTTON FOR OPEN FILE-------------------------------------------------------------------------------------------
         open_btn = tk.Button(self.neuframe,text='Open',font=FONT,command=lambda pathapp=pathapp:(Open(pathapp),self.clear_neuframe()))
@@ -445,16 +453,18 @@ class FileManager():
             self.update_dir()
         except PermissionError:
             pass
-
+    #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------
     def check_rights(self,p):
-        command = f'ls -l {p} > /home/mark/PycharmProjects/FREImanagr/rights_p'
-        os.system(command)
+        l = None
         rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
         for line in rights:
             l = line
-        r = 'root root'
-        if r in l:
-            self.sudo = True
+        r = 'Отказано в доступе'
+        if l == None:
+            pass
+        elif r in l:
+            app = self.Window_of_Sudo(self.root, None)
+
         rights.close()
 
 
