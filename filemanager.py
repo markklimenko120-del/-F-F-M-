@@ -453,12 +453,16 @@ class FileManager():
             self.update_dir()
         except PermissionError:
             pass
-    #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------
+    #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------C
     def check_rights(self,p):
         l = None
+        count = 0
         rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
         for line in rights:
             l = line
+            count += 1
+            if count >= 2:
+                break
         r = 'Отказано в доступе'
         if l == None:
             pass
@@ -476,7 +480,7 @@ class FileManager():
             self.createWindow()
             self.createOpenLabel()
             self.createOKButton()
-            self.createBackButton()
+            self.createCloseButton()
             self.createEntry()
 
         def createWindow(self):
@@ -492,13 +496,16 @@ class FileManager():
             self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12))
             self.OKButton.place(x=320,y=80)
 
-        def createBackButton(self):
-            self.BackButton = tk.Button(self.SudoWindow,text='Back',font=(FONT,12))
-            self.BackButton.place(x=120,y=80)
+        def createCloseButton(self):
+            self.CloseButton = tk.Button(self.SudoWindow, text='Back', font=(FONT, 12), command=lambda:(self.closeWindow()))
+            self.CloseButton.place(x=120, y=80)
 
         def createEntry(self):
             self.Entry = tk.Entry(self.SudoWindow,width=50)
             self.Entry.pack(anchor='center')
+
+        def closeWindow(self):
+            self.SudoWindow.destroy()
 
 
 
