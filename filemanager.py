@@ -3,6 +3,7 @@ import tkinter as tk
 import time
 from os import rename
 from queue import ShutDown
+from time import sleep
 from tkinter import ttk, StringVar, Scrollbar
 import os
 import filetype
@@ -72,6 +73,7 @@ class FileManager():
         self.me.place(y=70)
 
         self.update_dir()
+        self.updateRights_p()
 
     #MAINDIR LABEL WITH SCROLLBAR---------------------------------------------------------------------------------------
     def create_main_label (self):
@@ -198,8 +200,7 @@ class FileManager():
         open_button.place(x=0,y=95)
         #BUTTON FOR DELETE FILE-----------------------------------------------------------------------------------------
         command = f'rm -r "{p}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-        self.check_rights(p=p)
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),os.system(command), self.update_dir()))
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),os.system(command),self.check_rights(p=p), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME FILE-----------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_move(p),self.create_new_name(p)))
@@ -308,8 +309,8 @@ class FileManager():
         #FUNCTION FOR RELOCATE------------------------------------------------------------------------------------------
         def Relocate(p):
             command = f'mv "{p}" {self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-            self.check_rights(p=p)
             os.system(command)
+            self.check_rights(p=p)
             if os.path.isdir(p):
                 self.Go_Up()
             else:
@@ -331,8 +332,7 @@ class FileManager():
         self.create_main_label()
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
         command_to_delete = f'rm -r {p} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-        self.check_rights(p=p)
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.check_rights(p=p),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME MAIN DIR-------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_moves_for_dir(p),self.create_new_name(p)))
@@ -401,10 +401,9 @@ class FileManager():
         def clame_name(p):
             if os.path.isdir(p):
                 Path_dir = os.path.split(p)
-                New_name = Path_dir[0] + '/' + new_name.get()
+                New_name = os.path.join(Path_dir[0],new_name.get())
             else:
                 New_name = new_name.get()
-            os.rename(p,New_name)
             command = f'mv "{p}" "{New_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
             self.check_rights(p=p)
             os.system(command)
@@ -453,23 +452,29 @@ class FileManager():
             self.update_dir()
         except PermissionError:
             pass
+    #UPDATE FILE RIGHTS_P AFTER STARTING FFM----------------------------------------------------------------------------
+    def updateRights_p(self):
+        command = f'true > /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        os.system(command)
     #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------C
     def check_rights(self,p):
         l = None
-        count = 0
+        time,sleep(0.02)
         rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
         for line in rights:
             l = line
-            count += 1
-            if count >= 2:
-                break
+        self.checkLine(l)
+        rights.close()
+
+    def checkLine(self,l):
         r = 'Отказано в доступе'
+        print(l)
         if l == None:
             pass
         elif r in l:
             app = self.Window_of_Sudo(self.root, None)
+            return True
 
-        rights.close()
 
 
 
@@ -497,7 +502,7 @@ class FileManager():
             self.OKButton.place(x=320,y=80)
 
         def createCloseButton(self):
-            self.CloseButton = tk.Button(self.SudoWindow, text='Back', font=(FONT, 12), command=lambda:(self.closeWindow()))
+            self.CloseButton = tk.Button(self.SudoWindow, text='Close', font=(FONT, 12), command=lambda:(self.closeWindow()))
             self.CloseButton.place(x=120, y=80)
 
         def createEntry(self):
