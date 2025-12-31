@@ -246,7 +246,7 @@ class FileManager():
             self.create_dop_label(p=p)
         #UNTAR----------------------------------------------------------------------------------------------------------
         def Untar(p):
-            command = f'tar xof "{p}" -C "{self.main}"2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            command = f'tar xof "{p}" -C "{self.main}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
             self.check_rights(p=p)
             os.system(command)
         #LABEL WITH PATH TO UNARCHIVE-----------------------------------------------------------------------------------
@@ -465,10 +465,10 @@ class FileManager():
             l = line
         self.checkLine(l)
         rights.close()
+        command = 'true > /home/mark/PycharmProjects/FREImanagr/filemanager.py '
 
     def checkLine(self,l):
         r = 'Отказано в доступе'
-        print(l)
         if l == None:
             pass
         elif r in l:
@@ -498,7 +498,7 @@ class FileManager():
             self.OpenLabel.pack(anchor='center')
 
         def createOKButton(self):
-            self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12))
+            self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.getPassword()))
             self.OKButton.place(x=320,y=80)
 
         def createCloseButton(self):
@@ -511,6 +511,10 @@ class FileManager():
 
         def closeWindow(self):
             self.SudoWindow.destroy()
+
+        def getPassword(self):
+            pswd = self.Entry.get()
+            return pswd
 
 
 
