@@ -198,7 +198,7 @@ class FileManager():
         open_button = tk.Button(self.neuframe,text='Open',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_move(p),self.open_file(p)))
         open_button.place(x=0,y=95)
         #BUTTON FOR DELETE FILE-----------------------------------------------------------------------------------------
-        command = f'rm -r "{p}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        command = f'rm -r "{p}"  2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
         delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),self.check_rights(cmd=command), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME FILE-----------------------------------------------------------------------------------------
@@ -328,7 +328,7 @@ class FileManager():
         self.create_main_label()
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
         command_to_delete = f'rm -r {p} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.check_rights(cmd=command_to_delete),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.check_rights(command_to_delete),self.clear_neuframe(),self.Go_Up()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME MAIN DIR-------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_moves_for_dir(p),self.create_new_name(p)))
@@ -452,21 +452,24 @@ class FileManager():
     #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------C
     def check_rights(self,cmd):
         l = None
+        os.system(cmd)
         time.sleep(0.2)
         rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
         for line in rights:
             l = line
-        self.checkLine(l,cmd)
+            print(line)
         rights.close()
-        #command = 'true > /home/mark/PycharmProjects/FREImanagr/filemanager.py '
+        self.checkLine(l,cmd)
+#        self.updateRights_p()
+
+
 
     def checkLine(self,l,cmd):
         r = 'Отказано в доступе'
         if l == None:
-            os.system(cmd)
+            print(l)
         elif r in l:
             self.createWindowOfSudo(cmd)
-            return True
 
 
     def createWindowOfSudo(self,command):
@@ -487,7 +490,7 @@ class FileManager():
         self.OpenLabel.pack(anchor='center')
 
     def createOKButton(self):
-        self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.recommand(),self.update_dir(),self.closeWindow(),self.updateRights_p()))
+        self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.recommand(),self.update_dir(),self.closeWindow()))
         self.OKButton.place(x=320,y=80)
 
     def createCloseButton(self):
