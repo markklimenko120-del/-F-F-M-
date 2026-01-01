@@ -65,7 +65,7 @@ class FileManager():
         self.name = tk.Label(self.dopframe,text='Frei File Manager',font=(FONT,15,'underline'))
         self.name.place(y=0)
 
-        self.version = tk.Label(self.dopframe,text='Version:1.1.3 DEMO',font=(FONT,15,'underline'))
+        self.version = tk.Label(self.dopframe,text='Version:1.1.5 DEMO',font=(FONT,15,'underline'))
         self.version.place(y=35)
 
         self.me = tk.Label(self.dopframe,text='Developer:_F_R_E_I_',font=(FONT,15,'underline'))
@@ -460,14 +460,14 @@ class FileManager():
             print(line)
         rights.close()
         self.checkLine(l,cmd)
-#        self.updateRights_p()
+        self.updateRights_p()
 
 
 
     def checkLine(self,l,cmd):
         r = 'Отказано в доступе'
         if l == None:
-            print(l)
+            pass
         elif r in l:
             self.createWindowOfSudo(cmd)
 
@@ -490,7 +490,7 @@ class FileManager():
         self.OpenLabel.pack(anchor='center')
 
     def createOKButton(self):
-        self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.recommand(),self.update_dir(),self.closeWindow()))
+        self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.recommand(),self.closeWindow()))
         self.OKButton.place(x=320,y=80)
 
     def createCloseButton(self):
@@ -511,6 +511,8 @@ class FileManager():
     def recommand(self):
         command = (f'echo {self.getPassword()} | sudo -S {self.command}')
         os.system(command)
+        time.sleep(0.2)
+        self.update_dir()
 
 
 
