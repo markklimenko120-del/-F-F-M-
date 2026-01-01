@@ -2,7 +2,6 @@
 import tkinter as tk
 import time
 from os import rename
-from queue import ShutDown
 from time import sleep
 from tkinter import ttk, StringVar, Scrollbar
 import os
@@ -66,7 +65,7 @@ class FileManager():
         self.name = tk.Label(self.dopframe,text='Frei File Manager',font=(FONT,15,'underline'))
         self.name.place(y=0)
 
-        self.version = tk.Label(self.dopframe,text='Version:1.1.1 DEMO',font=(FONT,15,'underline'))
+        self.version = tk.Label(self.dopframe,text='Version:1.1.2 DEMO',font=(FONT,15,'underline'))
         self.version.place(y=35)
 
         self.me = tk.Label(self.dopframe,text='Developer:_F_R_E_I_',font=(FONT,15,'underline'))
@@ -200,7 +199,7 @@ class FileManager():
         open_button.place(x=0,y=95)
         #BUTTON FOR DELETE FILE-----------------------------------------------------------------------------------------
         command = f'rm -r "{p}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),os.system(command),self.check_rights(p=p), self.update_dir()))
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),os.system(command),self.check_rights(p=p,cmd=command), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME FILE-----------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_move(p),self.create_new_name(p)))
@@ -310,7 +309,7 @@ class FileManager():
         def Relocate(p):
             command = f'mv "{p}" {self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
             os.system(command)
-            self.check_rights(p=p)
+            self.check_rights(p=p,cmd=command)
             if os.path.isdir(p):
                 self.Go_Up()
             else:
@@ -332,7 +331,7 @@ class FileManager():
         self.create_main_label()
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
         command_to_delete = f'rm -r {p} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.check_rights(p=p),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.check_rights(p=p,cmd=command_to_delete),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME MAIN DIR-------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_moves_for_dir(p),self.create_new_name(p)))
@@ -358,7 +357,7 @@ class FileManager():
         def clame_name_dir():
             name = name_entr.get()
             command = f'mkdir "{name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-            self.check_rights(None)
+            self.check_rights(None,command)
             os.system(command)
 
             self.clear_neuframe()
@@ -381,7 +380,7 @@ class FileManager():
             if os.path.isfile(p):
                 copy_name = name_copy.get()
             command = f'cp -r "{p}" "{copy_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-            self.check_rights(p=p)
+            self.check_rights(p=p,cmd=command)
             os.system(command)
             #AFTER COPY MOVE--------------------------------------------------------------------------------------------
             if os.path.isdir(p):
@@ -405,7 +404,7 @@ class FileManager():
             else:
                 New_name = new_name.get()
             command = f'mv "{p}" "{New_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-            self.check_rights(p=p)
+            self.check_rights(p=p,cmd=command)
             os.system(command)
 
             self.clear_neuframe()
@@ -428,7 +427,7 @@ class FileManager():
         def Open(pathapp):
             self.app = app_entry.get()
             command = f'{self.app} "{pathapp}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
-            self.check_rights(p=p)
+            self.check_rights(p=p,cmd=command)
             os.system(command)
         #BUTTON FOR OPEN FILE-------------------------------------------------------------------------------------------
         open_btn = tk.Button(self.neuframe,text='Open',font=FONT,command=lambda pathapp=pathapp:(Open(pathapp),self.clear_neuframe()))
@@ -457,64 +456,65 @@ class FileManager():
         command = f'true > /home/mark/PycharmProjects/FREImanagr/rights_p &'
         os.system(command)
     #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------C
-    def check_rights(self,p):
+    def check_rights(self,p,cmd):
         l = None
-        time,sleep(0.02)
+        time.sleep(0.2)
         rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
         for line in rights:
             l = line
-        self.checkLine(l)
+        self.checkLine(l,cmd)
         rights.close()
-        command = 'true > /home/mark/PycharmProjects/FREImanagr/filemanager.py '
+        #command = 'true > /home/mark/PycharmProjects/FREImanagr/filemanager.py '
 
-    def checkLine(self,l):
+    def checkLine(self,l,cmd):
         r = 'Отказано в доступе'
         if l == None:
             pass
         elif r in l:
-            app = self.Window_of_Sudo(self.root, None)
+            app = self.createWindowOfSudo(cmd)
             return True
 
 
+    def createWindowOfSudo(self,command):
+        self.command = command
+        self.createWindow()
+        self.createOpenLabel()
+        self.createOKButton()
+        self.createCloseButton()
+        self.createEntry()
 
+    def createWindow(self):
+        self.SudoWindow = tk.Toplevel(self.root)
+        self.SudoWindow.geometry('500x150')
+        self.SudoWindow.title('Input Sudo')
 
-    class Window_of_Sudo():
-        def __init__(self,root,command):
-            self.root = root
-            self.command = command
-            self.createWindow()
-            self.createOpenLabel()
-            self.createOKButton()
-            self.createCloseButton()
-            self.createEntry()
+    def createOpenLabel(self):
+        self.OpenLabel = tk.Label(self.SudoWindow,text='Enter Root Password', font=(FONT,16))
+        self.OpenLabel.pack(anchor='center')
 
-        def createWindow(self):
-            self.SudoWindow = tk.Toplevel(self.root)
-            self.SudoWindow.geometry('500x150')
-            self.SudoWindow.title('Input Sudo')
+    def createOKButton(self):
+        self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.recommand(),self.update_dir(),self.closeWindow(),self.updateRights_p()))
+        self.OKButton.place(x=320,y=80)
 
-        def createOpenLabel(self):
-            self.OpenLabel = tk.Label(self.SudoWindow,text='Enter Root Password', font=(FONT,16))
-            self.OpenLabel.pack(anchor='center')
+    def createCloseButton(self):
+        self.CloseButton = tk.Button(self.SudoWindow, text='Close', font=(FONT, 12), command=lambda:(self.closeWindow()))
+        self.CloseButton.place(x=120, y=80)
 
-        def createOKButton(self):
-            self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.getPassword()))
-            self.OKButton.place(x=320,y=80)
+    def createEntry(self):
+        self.Entry = tk.Entry(self.SudoWindow,width=50)
+        self.Entry.pack(anchor='center')
 
-        def createCloseButton(self):
-            self.CloseButton = tk.Button(self.SudoWindow, text='Close', font=(FONT, 12), command=lambda:(self.closeWindow()))
-            self.CloseButton.place(x=120, y=80)
+    def closeWindow(self):
+        self.SudoWindow.destroy()
 
-        def createEntry(self):
-            self.Entry = tk.Entry(self.SudoWindow,width=50)
-            self.Entry.pack(anchor='center')
+    def getPassword(self):
+        pswd = self.Entry.get()
+        return pswd
 
-        def closeWindow(self):
-            self.SudoWindow.destroy()
+    def recommand(self):
+        command = (f'echo {self.getPassword()} | sudo -S {self.command}')
+        os.system(command)
 
-        def getPassword(self):
-            pswd = self.Entry.get()
-            return pswd
 
 
 
