@@ -65,7 +65,7 @@ class FileManager():
         self.name = tk.Label(self.dopframe,text='Frei File Manager',font=(FONT,15,'underline'))
         self.name.place(y=0)
 
-        self.version = tk.Label(self.dopframe,text='Version:1.1.5 DEMO',font=(FONT,15,'underline'))
+        self.version = tk.Label(self.dopframe,text='Version:1.1',font=(FONT,15,'underline'))
         self.version.place(y=35)
 
         self.me = tk.Label(self.dopframe,text='Developer:_F_R_E_I_',font=(FONT,15,'underline'))
