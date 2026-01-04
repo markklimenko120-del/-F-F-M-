@@ -457,7 +457,6 @@ class FileManager():
         rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
         for line in rights:
             l = line
-            print(line)
         rights.close()
         self.checkLine(l,cmd)
         self.updateRights_p()
@@ -509,13 +508,21 @@ class FileManager():
         return pswd
 
     def recommand(self):
-        command = (f'echo {self.getPassword()} | sudo -S {self.command}')
+        command = (f'echo {self.getPassword()} | sudo -Sk {self.command}')
         os.system(command)
         time.sleep(0.2)
         self.update_dir()
 
-
-
+    def UncorrectPassword(self):
+        rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p', 'r')
+        n = False
+        for line in rights:
+            l = line
+            r = 'Попробуйте ещё раз'
+            if r in l:
+                n = True
+        rights.close()
+        return n
 
 
 
