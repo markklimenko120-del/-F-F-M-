@@ -2,9 +2,11 @@
 import tkinter as tk
 import time
 from os import rename
+from time import sleep
 from tkinter import ttk, StringVar, Scrollbar
 import os
 import filetype
+
 from config import *
 
 
@@ -63,13 +65,15 @@ class FileManager():
         self.name = tk.Label(self.dopframe,text='Frei File Manager',font=(FONT,15,'underline'))
         self.name.place(y=0)
 
-        self.version = tk.Label(self.dopframe,text='Version:1.0.3 DEMO',font=(FONT,15,'underline'))
+        self.version = tk.Label(self.dopframe,text='Version:1.1',font=(FONT,15,'underline'))
         self.version.place(y=35)
 
         self.me = tk.Label(self.dopframe,text='Developer:_F_R_E_I_',font=(FONT,15,'underline'))
         self.me.place(y=70)
 
         self.update_dir()
+        self.updateRights_p()
+
     #MAINDIR LABEL WITH SCROLLBAR---------------------------------------------------------------------------------------
     def create_main_label (self):
         text_for_label = tk.Text(self.neuframe,width=45,height=2,background='grey',borderwidth=3,relief='ridge')
@@ -194,8 +198,8 @@ class FileManager():
         open_button = tk.Button(self.neuframe,text='Open',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_move(p),self.open_file(p)))
         open_button.place(x=0,y=95)
         #BUTTON FOR DELETE FILE-----------------------------------------------------------------------------------------
-        command = f'rm -r "{p}" &'
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),os.system(command), self.update_dir()))
+        command = f'rm -r "{p}"  2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.clear_neuframe(),self.check_rights(cmd=command), self.update_dir()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME FILE-----------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_move(p),self.create_new_name(p)))
@@ -241,8 +245,8 @@ class FileManager():
             self.create_dop_label(p=p)
         #UNTAR----------------------------------------------------------------------------------------------------------
         def Untar(p):
-            command = f'tar xof "{p}" -C "{self.main}" &'
-            os.system(command)
+            command = f'tar xof "{p}" -C "{self.main}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(command)
         #LABEL WITH PATH TO UNARCHIVE-----------------------------------------------------------------------------------
         self.create_dop_label(p=p)
         #BUTTON FOR UP-CHANGE UNARCHIVE PATH----------------------------------------------------------------------------
@@ -256,8 +260,8 @@ class FileManager():
         tar_btn.place(x=290,y=308)
         #FUNCTION FOR UNZIP---------------------------------------------------------------------------------------------
         def UnZip(p):
-            command = f'unzip -o "{p}" -d "{self.main}" &'
-            os.system(command)
+            command = f'unzip -o "{p}" -d "{self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(command)
         #BUTTON FOR UNZIP-----------------------------------------------------------------------------------------------
         zip_btn = tk.Button(self.neuframe,text='Zip',font=FONT,command=lambda p=p:(UnZip(p),self.clear_neuframe(),self.update_dir()))
         zip_btn.place(x=342,y=308)
@@ -301,8 +305,8 @@ class FileManager():
             self.create_dop_label(p=p)
         #FUNCTION FOR RELOCATE------------------------------------------------------------------------------------------
         def Relocate(p):
-            command = f'mv "{p}" {self.main} &'
-            os.system(command)
+            command = f'mv "{p}" {self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(command)
             if os.path.isdir(p):
                 self.Go_Up()
             else:
@@ -323,8 +327,8 @@ class FileManager():
         #LABEL FOR PATH MAIN DIR----------------------------------------------------------------------------------------
         self.create_main_label()
         #BUTTON FOR DELETE MAIN DIR-------------------------------------------------------------------------------------
-        command_to_delete = f'rm -r {p} &'
-        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(os.system(command_to_delete),self.clear_neuframe(),self.Go_Up(), self.update_dir()))
+        command_to_delete = f'rm -r {p} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        delete_button = tk.Button(self.neuframe,text='Delete',font=FONT,command=lambda :(self.check_rights(command_to_delete),self.clear_neuframe(),self.Go_Up()))
         delete_button.place(x=0,y=130)
         #BUTTON FOR RENAME MAIN DIR-------------------------------------------------------------------------------------
         remame_button = tk.Button(self.neuframe,text='Rename',font=FONT,command=lambda p=p:(self.clear_neuframe(),self.change_moves_for_dir(p),self.create_new_name(p)))
@@ -349,8 +353,8 @@ class FileManager():
         #FUNCTION FOR ACCEPT CREATE DIR---------------------------------------------------------------------------------
         def clame_name_dir():
             name = name_entr.get()
-            command = f'mkdir "{name}"'
-            os.system(command)
+            command = f'mkdir "{name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(command)
 
             self.clear_neuframe()
             self.update_dir()
@@ -371,8 +375,8 @@ class FileManager():
                 copy_name = Path_dir[0] + '/' + name_copy.get()
             if os.path.isfile(p):
                 copy_name = name_copy.get()
-            command = f'cp -r "{p}" "{copy_name}" & '
-            os.system(command)
+            command = f'cp -r "{p}" "{copy_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(command)
             #AFTER COPY MOVE--------------------------------------------------------------------------------------------
             if os.path.isdir(p):
                 self.Go_Up()
@@ -391,10 +395,11 @@ class FileManager():
         def clame_name(p):
             if os.path.isdir(p):
                 Path_dir = os.path.split(p)
-                New_name = Path_dir[0] + '/' + new_name.get()
+                New_name = os.path.join(Path_dir[0],new_name.get())
             else:
                 New_name = new_name.get()
-            os.rename(p,New_name)
+            command = f'mv "{p}" "{New_name}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(cmd=command)
 
             self.clear_neuframe()
             self.update_dir()
@@ -415,8 +420,9 @@ class FileManager():
         #OPEN FILE------------------------------------------------------------------------------------------------------
         def Open(pathapp):
             self.app = app_entry.get()
-            command = f'{self.app} "{pathapp}" &'
-            os.system(command)
+            command = f'{self.app} "{pathapp}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            self.check_rights(command)
+
         #BUTTON FOR OPEN FILE-------------------------------------------------------------------------------------------
         open_btn = tk.Button(self.neuframe,text='Open',font=FONT,command=lambda pathapp=pathapp:(Open(pathapp),self.clear_neuframe()))
         open_btn.place(x=220,y=95)
@@ -439,6 +445,85 @@ class FileManager():
             self.update_dir()
         except PermissionError:
             pass
+    #UPDATE FILE RIGHTS_P AFTER STARTING FFM----------------------------------------------------------------------------
+    def updateRights_p(self):
+        command = f'true > /home/mark/PycharmProjects/FREImanagr/rights_p &'
+        os.system(command)
+    #FUNCTION FOR CHECKING NEED ROOT RIGHT------------------------------------------------------------------------------C
+    def check_rights(self,cmd):
+        l = None
+        os.system(cmd)
+        time.sleep(0.2)
+        rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p','r')
+        for line in rights:
+            l = line
+        rights.close()
+        self.checkLine(l,cmd)
+        self.updateRights_p()
+
+
+
+    def checkLine(self,l,cmd):
+        r = 'Отказано в доступе'
+        if l == None:
+            pass
+        elif r in l:
+            self.createWindowOfSudo(cmd)
+
+
+    def createWindowOfSudo(self,command):
+        self.command = command
+        self.createWindow()
+        self.createOpenLabel()
+        self.createOKButton()
+        self.createCloseButton()
+        self.createEntry()
+
+    def createWindow(self):
+        self.SudoWindow = tk.Toplevel(self.root)
+        self.SudoWindow.geometry('500x150')
+        self.SudoWindow.title('Input Sudo')
+
+    def createOpenLabel(self):
+        self.OpenLabel = tk.Label(self.SudoWindow,text='Enter Root Password', font=(FONT,16))
+        self.OpenLabel.pack(anchor='center')
+
+    def createOKButton(self):
+        self.OKButton = tk.Button(self.SudoWindow,text='OK',font=(FONT,12),command=lambda:(self.recommand(),self.closeWindow()))
+        self.OKButton.place(x=320,y=80)
+
+    def createCloseButton(self):
+        self.CloseButton = tk.Button(self.SudoWindow, text='Close', font=(FONT, 12), command=lambda:(self.closeWindow()))
+        self.CloseButton.place(x=120, y=80)
+
+    def createEntry(self):
+        self.Entry = tk.Entry(self.SudoWindow,width=50)
+        self.Entry.pack(anchor='center')
+
+    def closeWindow(self):
+        self.SudoWindow.destroy()
+
+    def getPassword(self):
+        pswd = self.Entry.get()
+        return pswd
+
+    def recommand(self):
+        command = (f'echo {self.getPassword()} | sudo -Sk {self.command}')
+        os.system(command)
+        time.sleep(0.2)
+        self.update_dir()
+
+    def UncorrectPassword(self):
+        rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p', 'r')
+        n = False
+        for line in rights:
+            l = line
+            r = 'Попробуйте ещё раз'
+            if r in l:
+                n = True
+        rights.close()
+        return n
+
 
 
 #START -F-F-M-

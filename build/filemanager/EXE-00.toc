@@ -50,7 +50,7 @@
  [],
  False,
  False,
- 1765904062,
+ 1766422454,
  [('run',
    '/home/mark/PycharmProjects/FREImanagr/.venv/lib/python3.13/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run',
    'EXECUTABLE')],

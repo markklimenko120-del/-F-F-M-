@@ -176,6 +176,7 @@
   ('pickle', '/usr/lib/python3.13/pickle.py', 'PYMODULE'),
   ('pprint', '/usr/lib/python3.13/pprint.py', 'PYMODULE'),
   ('py_compile', '/usr/lib/python3.13/py_compile.py', 'PYMODULE'),
+  ('queue', '/usr/lib/python3.13/queue.py', 'PYMODULE'),
   ('quopri', '/usr/lib/python3.13/quopri.py', 'PYMODULE'),
   ('random', '/usr/lib/python3.13/random.py', 'PYMODULE'),
   ('selectors', '/usr/lib/python3.13/selectors.py', 'PYMODULE'),
