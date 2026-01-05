@@ -246,6 +246,7 @@ class FileManager():
         #UNTAR----------------------------------------------------------------------------------------------------------
         def Untar(p):
             command = f'tar xof "{p}" -C "{self.main}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            print(command)
             self.check_rights(command)
         #LABEL WITH PATH TO UNARCHIVE-----------------------------------------------------------------------------------
         self.create_dop_label(p=p)
@@ -260,7 +261,8 @@ class FileManager():
         tar_btn.place(x=290,y=308)
         #FUNCTION FOR UNZIP---------------------------------------------------------------------------------------------
         def UnZip(p):
-            command = f'unzip -o "{p}" -d "{self.main} 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+            command = f'unzip -o "{p}" -d "{self.main}" 2> /home/mark/PycharmProjects/FREImanagr/rights_p &'
+
             self.check_rights(command)
         #BUTTON FOR UNZIP-----------------------------------------------------------------------------------------------
         zip_btn = tk.Button(self.neuframe,text='Zip',font=FONT,command=lambda p=p:(UnZip(p),self.clear_neuframe(),self.update_dir()))
@@ -512,18 +514,6 @@ class FileManager():
         os.system(command)
         time.sleep(0.2)
         self.update_dir()
-
-    def UncorrectPassword(self):
-        rights = open('/home/mark/PycharmProjects/FREImanagr/rights_p', 'r')
-        n = False
-        for line in rights:
-            l = line
-            r = 'Попробуйте ещё раз'
-            if r in l:
-                n = True
-        rights.close()
-        return n
-
 
 
 #START -F-F-M-
